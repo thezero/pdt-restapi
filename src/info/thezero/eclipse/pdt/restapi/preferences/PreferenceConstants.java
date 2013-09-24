@@ -4,6 +4,7 @@ package info.thezero.eclipse.pdt.restapi.preferences;
  * Constant definitions for plug-in preferences
  */
 public class PreferenceConstants {
+	public static final String P_URI_DEFINITION = "uriXmlDefinitionFile";
 
 	public static final String P_PATH = "pathPreference";
 
@@ -12,5 +13,5 @@ public class PreferenceConstants {
 	public static final String P_CHOICE = "choicePreference";
 
 	public static final String P_STRING = "stringPreference";
-	
+
 }

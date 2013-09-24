@@ -1,7 +1,18 @@
 package info.thezero.eclipse.pdt.restapi.uri;
 
+import info.thezero.eclipse.pdt.restapi.Activator;
+import info.thezero.eclipse.pdt.restapi.preferences.PreferenceConstants;
+
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
+
+import javax.xml.parsers.SAXParser;
+import javax.xml.parsers.SAXParserFactory;
+
+import org.eclipse.jface.util.IPropertyChangeListener;
+import org.eclipse.jface.util.PropertyChangeEvent;
+import org.eclipse.php.internal.core.PHPCorePlugin;
 
 public class Map {
 	private Node root;
@@ -12,46 +23,53 @@ public class Map {
 	}
 
 	public Map() {
-		root = new Node("");
 		this.init();
 	}
 
-	private void init() {
-		for (String apiUri : getUris()) {
-			// sanity check
-			if (apiUri.isEmpty()) {
-				continue;
-			}
+	@SuppressWarnings("restriction")
+	public void init() {
+		root = new Node("");
 
-			// remove trailing slash
-			if (apiUri.charAt(0) == '/') {
-				apiUri = apiUri.substring(1);
-			}
+		String location = Activator.getDefault().getPreferenceStore()
+				.getString(PreferenceConstants.P_URI_DEFINITION);
 
-			Node node = root;
-			for (String part : apiUri.split("/")) {
-				if (node.hasChild(part)) {
-					node = node.getChild(part);
-				} else {
-					node = node.addChild(part);
-				}
-			}
-
-			// last part of URL denotes leaf
-			if (node != root) {
-				node.setIsLeaf(true);
+		if (!location.isEmpty()) {
+			try {
+				File uriFile = new File(location);
+				SAXParser parser = SAXParserFactory.newInstance().newSAXParser();
+				UriFileParser handler = new UriFileParser(this);
+				parser.parse(uriFile, handler);
+			} catch (Exception E) {
+				PHPCorePlugin.log(E);
 			}
 		}
 		root.normalize();
 	}
 
-	private String[] getUris() {
-		return new String[] {
-			"/users/:username",
-			"/users/:username/profile",
-			"/users/:username/account",
-			"/login/sso"
-		};
+	void addUri(String apiUri) {
+		// sanity check
+		if (apiUri.isEmpty()) {
+			return;
+		}
+
+		// remove trailing slash
+		if (apiUri.charAt(0) == '/') {
+			apiUri = apiUri.substring(1);
+		}
+
+		Node node = root;
+		for (String part : apiUri.split("/")) {
+			if (node.hasChild(part)) {
+				node = node.getChild(part);
+			} else {
+				node = node.addChild(part);
+			}
+		}
+
+		// last part of URL denotes leaf
+		if (node != root) {
+			node.setIsLeaf(true);
+		}
 	}
 
 	public String[] suggest(String uri) {

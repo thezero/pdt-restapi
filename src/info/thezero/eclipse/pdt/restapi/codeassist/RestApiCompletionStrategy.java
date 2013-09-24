@@ -24,8 +24,11 @@ public class RestApiCompletionStrategy extends AbstractCompletionStrategy implem
 		// TODO Auto-generated method stub
 		RestApiCompletionContext context = (RestApiCompletionContext) getContext();
 
-		for (String apiUri : Map.getDefault().suggest(context.getUri())) {
-			reporter.reportKeyword(apiUri, "", getReplacementRange(context));
+		String[] files = Map.getDefault().suggest(context.getUri());
+		if (files != null) {
+			for (String apiUri : files) {
+				reporter.reportKeyword(apiUri, "", getReplacementRange(context));
+			}
 		}
 	}
 

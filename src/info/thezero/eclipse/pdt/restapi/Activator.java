@@ -1,6 +1,11 @@
 package info.thezero.eclipse.pdt.restapi;
 
+import info.thezero.eclipse.pdt.restapi.preferences.PreferenceConstants;
+import info.thezero.eclipse.pdt.restapi.uri.Map;
+
 import org.eclipse.jface.resource.ImageDescriptor;
+import org.eclipse.jface.util.IPropertyChangeListener;
+import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.osgi.framework.BundleContext;
 
@@ -14,7 +19,7 @@ public class Activator extends AbstractUIPlugin {
 
 	// The shared instance
 	private static Activator plugin;
-	
+
 	/**
 	 * The constructor
 	 */
@@ -28,6 +33,18 @@ public class Activator extends AbstractUIPlugin {
 	public void start(BundleContext context) throws Exception {
 		super.start(context);
 		plugin = this;
+
+		this.getPreferenceStore()
+			.addPropertyChangeListener(new IPropertyChangeListener() {
+				// change listener to API URI location file
+
+				@Override
+				public void propertyChange(PropertyChangeEvent event) {
+					if (event.getProperty() == PreferenceConstants.P_URI_DEFINITION) {
+						Map.getDefault().init();
+					}
+				}
+			});
 	}
 
 	/*
