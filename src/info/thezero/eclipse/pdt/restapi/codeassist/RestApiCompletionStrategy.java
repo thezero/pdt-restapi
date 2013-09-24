@@ -1,5 +1,7 @@
 package info.thezero.eclipse.pdt.restapi.codeassist;
 
+import info.thezero.eclipse.pdt.restapi.uri.Map;
+
 import org.eclipse.php.core.codeassist.ICompletionContext;
 import org.eclipse.php.core.codeassist.ICompletionStrategy;
 import org.eclipse.php.core.codeassist.IElementFilter;
@@ -8,16 +10,17 @@ import org.eclipse.php.internal.core.codeassist.strategies.AbstractCompletionStr
 
 @SuppressWarnings("restriction")
 public class RestApiCompletionStrategy extends AbstractCompletionStrategy implements ICompletionStrategy {
+	private Map uriMap;
 
 	public RestApiCompletionStrategy(ICompletionContext context) {
 		super(context);
-		// TODO Auto-generated constructor stub
+		this.uriMap = new Map();
 	}
 
 	public RestApiCompletionStrategy(ICompletionContext context,
 			IElementFilter elementFilter) {
 		super(context, elementFilter);
-		// TODO Auto-generated constructor stub
+		this.uriMap = new Map();
 	}
 
 	@Override
@@ -25,20 +28,9 @@ public class RestApiCompletionStrategy extends AbstractCompletionStrategy implem
 		// TODO Auto-generated method stub
 		RestApiCompletionContext context = (RestApiCompletionContext) getContext();
 
-		for (String apiUri : getUris()) {
-			if (apiUri.startsWith(context.getUri())) {
-				reporter.reportKeyword(apiUri, "", getReplacementRange(context));
-			}
+		for (String apiUri : uriMap.suggest(context.getUri())) {
+			reporter.reportKeyword(apiUri, "", getReplacementRange(context));
 		}
-	}
-
-	private String[] getUris() {
-		return new String[] {
-			"users/:username",
-			"users/:username/profile",
-			"users/:username/account",
-			"login/sso"
-		};
 	}
 
 }
