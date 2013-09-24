@@ -5,6 +5,11 @@ import java.util.List;
 
 public class Map {
 	private Node root;
+	private static final Map instance = new Map();
+
+	public static Map getDefault() {
+		return instance;
+	}
 
 	public Map() {
 		root = new Node("");
@@ -37,6 +42,7 @@ public class Map {
 				node.setIsLeaf(true);
 			}
 		}
+		root.normalize();
 	}
 
 	private String[] getUris() {
@@ -62,17 +68,26 @@ public class Map {
 
 		Node node = root;
 		for (int i = 0; i < partsCount - 1; i++) {
+			// normalization doesn't change keys in HashMap
+			// so we're searching only for first part
+			// ie. "users" => {name: "users/:username"}
 			if (!node.hasChild(parts[i])) {
 				// no matches in subpart
 				return null;
 			}
 			node = node.getChild(parts[i]);
+			// additionally skip all parts removed during normalization
+			i += node.getSkip();
 		}
 
 		List<String> result = new ArrayList<String>();
 		for (Node child : node.getChildren()) {
 			if (child.getName().startsWith(lastPart)) {
-				result.add(child.getName());
+				if (child.isLeaf()) {
+					result.add(child.getName());
+				} else {
+					result.add(child.getName().concat("/"));
+				}
 			}
 		}
 

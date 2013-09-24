@@ -10,17 +10,13 @@ import org.eclipse.php.internal.core.codeassist.strategies.AbstractCompletionStr
 
 @SuppressWarnings("restriction")
 public class RestApiCompletionStrategy extends AbstractCompletionStrategy implements ICompletionStrategy {
-	private Map uriMap;
-
 	public RestApiCompletionStrategy(ICompletionContext context) {
 		super(context);
-		this.uriMap = new Map();
 	}
 
 	public RestApiCompletionStrategy(ICompletionContext context,
 			IElementFilter elementFilter) {
 		super(context, elementFilter);
-		this.uriMap = new Map();
 	}
 
 	@Override
@@ -28,7 +24,7 @@ public class RestApiCompletionStrategy extends AbstractCompletionStrategy implem
 		// TODO Auto-generated method stub
 		RestApiCompletionContext context = (RestApiCompletionContext) getContext();
 
-		for (String apiUri : uriMap.suggest(context.getUri())) {
+		for (String apiUri : Map.getDefault().suggest(context.getUri())) {
 			reporter.reportKeyword(apiUri, "", getReplacementRange(context));
 		}
 	}
