@@ -1,0 +1,14 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: Restapi
+Bundle-SymbolicName: info.thezero.eclipse.pdt.restapi;singleton:=true
+Bundle-Version: 1.0.0.qualifier
+Bundle-Activator: info.thezero.eclipse.pdt.restapi.Activator
+Bundle-Vendor: Jakub Tománek
+Require-Bundle: org.eclipse.ui,
+ org.eclipse.core.runtime,
+ org.eclipse.php.core,
+ org.eclipse.dltk.core,
+ org.eclipse.text
+Bundle-RequiredExecutionEnvironment: JavaSE-1.7
+Bundle-ActivationPolicy: lazy

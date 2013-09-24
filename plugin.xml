@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.4"?>
+<plugin>
+
+   <extension
+         point="org.eclipse.ui.preferencePages">
+      <page
+            name="PDT REST API"
+            class="info.thezero.eclipse.pdt.restapi.preferences.SamplePreferencePage"
+            id="info.thezero.eclipse.pdt.restapi.preferences.SamplePreferencePage">
+      </page>
+   </extension>
+   <extension
+         point="org.eclipse.core.runtime.preferences">
+      <initializer
+            class="info.thezero.eclipse.pdt.restapi.preferences.PreferenceInitializer">
+      </initializer>
+   </extension>
+   <extension
+         point="org.eclipse.php.core.completionContextResolvers">
+         <resolver class="info.thezero.eclipse.pdt.restapi.codeassist.RestApiContextResolver" />
+   </extension>
+   <extension
+         point="org.eclipse.php.core.completionStrategyFactories">
+         <factory class="info.thezero.eclipse.pdt.restapi.codeassist.RestApiCompletionStrategyFactory" />
+   </extension>
+
+</plugin>
