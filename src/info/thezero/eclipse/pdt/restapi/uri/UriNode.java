@@ -4,13 +4,13 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
-public class Node {
+public class UriNode {
 	private boolean leaf;
 	private String name;
-	private Map<String, Node> children = new HashMap<String, Node>();
+	private Map<String, UriNode> children = new HashMap<String, UriNode>();
 	private int skip = 0;
 
-	public Node(String name) {
+	public UriNode(String name) {
 		this.name = name;
 	}
 
@@ -26,8 +26,8 @@ public class Node {
 		return this.name;
 	}
 
-	public Node addChild(String name) {
-		Node child = new Node(name);
+	public UriNode addChild(String name) {
+		UriNode child = new UriNode(name);
 		this.children.put(name, child);
 		return child;
 	}
@@ -36,24 +36,24 @@ public class Node {
 		return this.children.containsKey(name);
 	}
 
-	public Node getChild(String name) {
+	public UriNode getChild(String name) {
 		return this.children.get(name);
 	}
 
-	public Collection<Node> getChildren() {
+	public Collection<UriNode> getChildren() {
 		return this.children.values();
 	}
 
 	public void normalize() {
 		if (this.children.size() == 1 && !this.leaf) {
-			Node child    = (Node) this.children.values().toArray()[0];
+			UriNode child    = (UriNode) this.children.values().toArray()[0];
 			this.name     = String.format("%s/%s", this.name, child.name);
 			this.children = child.children;
 			this.leaf     = child.leaf;
 			this.skip++;
 			this.normalize();
 		} else {
-			for (Node child : this.children.values()) {
+			for (UriNode child : this.children.values()) {
 				child.normalize();
 			}
 		}

@@ -14,21 +14,21 @@ import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.php.internal.core.PHPCorePlugin;
 
-public class Map {
-	private Node root;
-	private static final Map instance = new Map();
+public class UriMap {
+	private UriNode root;
+	private static final UriMap instance = new UriMap();
 
-	public static Map getDefault() {
+	public static UriMap getDefault() {
 		return instance;
 	}
 
-	public Map() {
+	public UriMap() {
 		this.init();
 	}
 
 	@SuppressWarnings("restriction")
 	public void init() {
-		root = new Node("");
+		root = new UriNode("");
 
 		String location = Activator.getDefault().getPreferenceStore()
 				.getString(PreferenceConstants.P_URI_DEFINITION);
@@ -57,7 +57,7 @@ public class Map {
 			apiUri = apiUri.substring(1);
 		}
 
-		Node node = root;
+		UriNode node = root;
 		for (String part : apiUri.split("/")) {
 			if (node.hasChild(part)) {
 				node = node.getChild(part);
@@ -84,7 +84,7 @@ public class Map {
 			lastPart = "";
 		}
 
-		Node node = root;
+		UriNode node = root;
 		for (int i = 0; i < partsCount - 1; i++) {
 			// normalization doesn't change keys in HashMap
 			// so we're searching only for first part
@@ -99,7 +99,7 @@ public class Map {
 		}
 
 		List<String> result = new ArrayList<String>();
-		for (Node child : node.getChildren()) {
+		for (UriNode child : node.getChildren()) {
 			if (child.getName().startsWith(lastPart)) {
 				if (child.isLeaf()) {
 					result.add(child.getName());

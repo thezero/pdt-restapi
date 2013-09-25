@@ -6,9 +6,9 @@ import org.xml.sax.helpers.DefaultHandler;
 
 public class UriFileParser extends DefaultHandler {
 	private StringBuilder content;
-	private Map map;
+	private UriMap map;
 
-	public UriFileParser(Map map) {
+	public UriFileParser(UriMap map) {
 		this.content = new StringBuilder();
 		this.map = map;
 	}

@@ -1,6 +1,6 @@
 package info.thezero.eclipse.pdt.restapi.codeassist;
 
-import info.thezero.eclipse.pdt.restapi.uri.Map;
+import info.thezero.eclipse.pdt.restapi.uri.UriMap;
 
 import org.eclipse.php.core.codeassist.ICompletionContext;
 import org.eclipse.php.core.codeassist.ICompletionStrategy;
@@ -24,7 +24,7 @@ public class RestApiCompletionStrategy extends AbstractCompletionStrategy implem
 		// TODO Auto-generated method stub
 		RestApiCompletionContext context = (RestApiCompletionContext) getContext();
 
-		String[] files = Map.getDefault().suggest(context.getUri());
+		String[] files = UriMap.getDefault().suggest(context.getUri());
 		if (files != null) {
 			for (String apiUri : files) {
 				reporter.reportKeyword(apiUri, "", getReplacementRange(context));
