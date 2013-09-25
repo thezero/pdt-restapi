@@ -5,6 +5,8 @@ package info.thezero.eclipse.pdt.restapi.preferences;
  */
 public class PreferenceConstants {
 	public static final String P_URI_DEFINITION = "uriXmlDefinitionFile";
+	
+	public static final String P_COLLAPSE_LIMIT = "suggestionCollapseLimit";
 
 	public static final String P_PATH = "pathPreference";
 

@@ -42,6 +42,13 @@ public class Activator extends AbstractUIPlugin {
 				public void propertyChange(PropertyChangeEvent event) {
 					if (event.getProperty() == PreferenceConstants.P_URI_DEFINITION) {
 						UriMap.getDefault().init();
+					} else if (event.getProperty() == PreferenceConstants.P_COLLAPSE_LIMIT) {
+						try {
+							int newValue = (Integer) event.getNewValue();
+							UriMap.getDefault().setMaxSuggestions(newValue);
+						} catch (ClassCastException E) {
+							// do nothing, keep the old value
+						}
 					}
 				}
 			});

@@ -10,13 +10,14 @@ import java.util.List;
 import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
 
-import org.eclipse.jface.util.IPropertyChangeListener;
-import org.eclipse.jface.util.PropertyChangeEvent;
+import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.php.internal.core.PHPCorePlugin;
 
+@SuppressWarnings("restriction")
 public class UriMap {
 	private UriNode root;
 	private static final UriMap instance = new UriMap();
+	private int maxSuggestions = 10;
 
 	public static UriMap getDefault() {
 		return instance;
@@ -26,12 +27,12 @@ public class UriMap {
 		this.init();
 	}
 
-	@SuppressWarnings("restriction")
 	public void init() {
 		root = new UriNode("");
 
-		String location = Activator.getDefault().getPreferenceStore()
-				.getString(PreferenceConstants.P_URI_DEFINITION);
+		IPreferenceStore preferenceStore = Activator.getDefault().getPreferenceStore();
+		this.maxSuggestions = preferenceStore.getInt(PreferenceConstants.P_COLLAPSE_LIMIT);
+		String location = preferenceStore.getString(PreferenceConstants.P_URI_DEFINITION);
 
 		if (!location.isEmpty()) {
 			try {
@@ -99,17 +100,32 @@ public class UriMap {
 		}
 
 		List<String> result = new ArrayList<String>();
+		List<UriNode> suggestions = new ArrayList<UriNode>();
+		int totalSuggestions = 0;
 		for (UriNode child : node.getChildren()) {
 			if (child.getName().startsWith(lastPart)) {
-				if (child.isLeaf()) {
-					result.add(child.getName());
-				} else {
-					result.add(child.getName().concat("/"));
-				}
+				suggestions.add(child);
+				totalSuggestions += child.getChildrenCount();
+			}
+		}
+		
+		boolean useAll = (totalSuggestions <= this.maxSuggestions);
+		for (UriNode child : suggestions) {
+			if (useAll) {
+				// collapse adds leafs automatically
+				result.addAll(child.collapse());
+			} else if (child.isLeaf()) {
+				result.add(child.getName());
+			} else if (!useAll) {
+				result.add(child.getName().concat("/"));
 			}
 		}
 
 		return result.toArray(new String[result.size()]);
+	}
+
+	public void setMaxSuggestions(int newValue) {
+		this.maxSuggestions = newValue;
 	}
 
 }

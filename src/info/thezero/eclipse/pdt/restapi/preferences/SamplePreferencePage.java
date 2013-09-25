@@ -38,6 +38,7 @@ public class SamplePreferencePage
 	 */
 	public void createFieldEditors() {
 		addField(new FileFieldEditor(PreferenceConstants.P_URI_DEFINITION, "&URI definition file", getFieldEditorParent()));
+		addField(new IntegerFieldEditor(PreferenceConstants.P_COLLAPSE_LIMIT, "Show &all suggestions if their count is less or equal to", getFieldEditorParent()));
 		addField(
 			new BooleanFieldEditor(
 				PreferenceConstants.P_BOOLEAN,
