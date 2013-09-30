@@ -5,6 +5,7 @@ import info.thezero.eclipse.pdt.restapi.preferences.PreferenceConstants;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 import javax.xml.parsers.SAXParser;
@@ -73,7 +74,7 @@ public class UriMap {
 		}
 	}
 
-	public String[] suggest(String uri) {
+	public Collection<UriSuggestion> suggest(String uri) {
 		String[] parts = uri.split("/");
 		int partsCount = parts.length;
 		String lastPart = parts[partsCount - 1];
@@ -99,7 +100,7 @@ public class UriMap {
 			i += node.getSkip();
 		}
 
-		List<String> result = new ArrayList<String>();
+		List<UriSuggestion> result = new ArrayList<UriSuggestion>();
 		List<UriNode> suggestions = new ArrayList<UriNode>();
 		int totalSuggestions = 0;
 		for (UriNode child : node.getChildren()) {
@@ -108,20 +109,30 @@ public class UriMap {
 				totalSuggestions += child.getChildrenCount();
 			}
 		}
-		
+
+		// for presentation purposes, prefix URI with starting slash
+		String showUri = "";
+		for (int i = 0; i < partsCount - 1; i++) {
+			showUri = showUri.concat(parts[i]).concat("/");
+		}
+
 		boolean useAll = (totalSuggestions <= this.maxSuggestions);
 		for (UriNode child : suggestions) {
 			if (useAll) {
 				// collapse adds leafs automatically
-				result.addAll(child.collapse());
+				for (String childUri : child.collapse()) {
+					result.add(new UriSuggestion(showUri, childUri));
+				}
 			} else if (child.isLeaf()) {
-				result.add(child.getName());
+				String childUri = child.getName();
+				result.add(new UriSuggestion(showUri, childUri));
 			} else if (!useAll) {
-				result.add(child.getName().concat("/"));
+				String childUri = child.getName().concat("/");
+				result.add(new UriSuggestion(showUri, childUri));
 			}
 		}
 
-		return result.toArray(new String[result.size()]);
+		return result;
 	}
 
 	public void setMaxSuggestions(int newValue) {
