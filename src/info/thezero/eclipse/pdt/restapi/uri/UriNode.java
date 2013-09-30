@@ -48,29 +48,20 @@ public class UriNode {
 	}
 
 	public void normalize() {
-		if (this.children.size() == 1 && !this.leaf) {
-			UriNode child    = (UriNode) this.children.values().toArray()[0];
-			this.name     = String.format("%s/%s", this.name, child.name);
-			this.children = child.children;
-			this.leaf     = child.leaf;
-			this.skip++;
-			this.normalize();
-		} else {
-			for (UriNode child : this.children.values()) {
-				child.normalize();
-				this.childrenCount += child.getChildrenCount();
-			}
-			
-			if (this.isLeaf()) {
-				this.childrenCount++;
-			}
+		for (UriNode child : this.children.values()) {
+			child.normalize();
+			this.childrenCount += child.getChildrenCount();
+		}
+
+		if (this.isLeaf()) {
+			this.childrenCount++;
 		}
 	}
 
 	public int getSkip() {
 		return this.skip;
 	}
-	
+
 	public int getChildrenCount() {
 		return this.childrenCount;
 	}
@@ -78,16 +69,16 @@ public class UriNode {
 	public Collection<String> collapse() {
 		return this.collapse("");
 	}
-	
+
 	private Collection<String> collapse(String prefix) {
 		List<String> childrenNames = new ArrayList<String>();
-		
+
 		// leaf is presented without trailing slash
 		prefix = prefix.concat(this.name);
 		if (this.isLeaf()) {
 			childrenNames.add(prefix);
 		}
-		
+
 		// all children need a slash
 		prefix = prefix.concat("/");
 		for (UriNode child : this.children.values()) {
