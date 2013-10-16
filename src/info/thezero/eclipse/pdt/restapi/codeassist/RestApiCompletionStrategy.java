@@ -27,7 +27,7 @@ public class RestApiCompletionStrategy extends AbstractCompletionStrategy implem
 		// TODO Auto-generated method stub
 		RestApiCompletionContext context = (RestApiCompletionContext) getContext();
 
-		Collection<UriSuggestion> suggestions = UriMapCollection.getDefault().suggest("api", context.getUri());
+		Collection<UriSuggestion> suggestions = UriMapCollection.getDefault().suggest(context.getTrigger(), context.getUri());
 		if (suggestions != null) {
 			for (UriSuggestion suggestion : suggestions) {
 				reporter.reportKeyword(suggestion.getSuggestionPart(), "", getReplacementRange(context));

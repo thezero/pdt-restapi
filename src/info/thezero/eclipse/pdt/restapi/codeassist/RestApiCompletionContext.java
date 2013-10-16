@@ -1,5 +1,8 @@
 package info.thezero.eclipse.pdt.restapi.codeassist;
 
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
 import org.eclipse.php.internal.core.codeassist.contexts.QuotesContext;
 import org.eclipse.php.internal.core.util.text.TextSequence;
 import org.eclipse.dltk.core.CompletionRequestor;
@@ -8,6 +11,7 @@ import org.eclipse.dltk.core.ISourceModule;
 @SuppressWarnings("restriction")
 public class RestApiCompletionContext extends QuotesContext {
 	private String uri;
+	private String trigger;
 
 	public boolean isValid(ISourceModule sourceModule, int offset, CompletionRequestor requestor) {
 
@@ -24,6 +28,7 @@ public class RestApiCompletionContext extends QuotesContext {
 
 			if (contents.length() > 0 && contents.charAt(0) == '/') {
 				this.uri = contents.toString().substring(1);
+				this.trigger = getTriggerFromSequence(statementText, quotesStart);
 				return true;
 			}
 		}
@@ -51,9 +56,26 @@ public class RestApiCompletionContext extends QuotesContext {
 		return startPosition;
 	}
 
+	public static String getTriggerFromSequence(TextSequence textSequence, int quoteStart) {
+		TextSequence opening = textSequence.subTextSequence(0, quoteStart);
+
+		Pattern p = Pattern.compile(".*\\b(\\w+)\\s*\\(\\s*.*");
+		Matcher m = p.matcher(opening);
+
+		if (!m.matches()) {
+			return "";
+		}
+
+		return m.group(1);
+	}
+
 
 	public String getUri() {
 		return this.uri;
+	}
+
+	public String getTrigger() {
+		return trigger;
 	}
 
 }
