@@ -1,7 +1,7 @@
 package info.thezero.eclipse.pdt.restapi;
 
 import info.thezero.eclipse.pdt.restapi.preferences.PreferenceConstants;
-import info.thezero.eclipse.pdt.restapi.uri.UriMap;
+import info.thezero.eclipse.pdt.restapi.uri.UriMapCollection;
 
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.util.IPropertyChangeListener;
@@ -41,11 +41,11 @@ public class Activator extends AbstractUIPlugin {
 				@Override
 				public void propertyChange(PropertyChangeEvent event) {
 					if (event.getProperty() == PreferenceConstants.P_URI_DEFINITION) {
-						UriMap.getDefault().init();
+						UriMapCollection.getDefault().init();
 					} else if (event.getProperty() == PreferenceConstants.P_COLLAPSE_LIMIT) {
 						try {
 							int newValue = (Integer) event.getNewValue();
-							UriMap.getDefault().setMaxSuggestions(newValue);
+							UriMapCollection.getDefault().setMaxSuggestions(newValue);
 						} catch (ClassCastException E) {
 							// do nothing, keep the old value
 						}

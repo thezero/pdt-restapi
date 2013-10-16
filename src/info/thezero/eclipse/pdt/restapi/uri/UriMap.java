@@ -1,51 +1,33 @@
 package info.thezero.eclipse.pdt.restapi.uri;
 
-import info.thezero.eclipse.pdt.restapi.Activator;
-import info.thezero.eclipse.pdt.restapi.preferences.PreferenceConstants;
-
-import java.io.File;
 import java.util.ArrayList;
-import java.util.Collection;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
-import javax.xml.parsers.SAXParser;
-import javax.xml.parsers.SAXParserFactory;
-
-import org.eclipse.jface.preference.IPreferenceStore;
-import org.eclipse.php.internal.core.PHPCorePlugin;
-
-@SuppressWarnings("restriction")
 public class UriMap {
 	private UriNode root;
-	private static final UriMap instance = new UriMap();
-	private int maxSuggestions = 10;
-
-	public static UriMap getDefault() {
-		return instance;
-	}
+	private Set<String> triggers = new HashSet<String>();
+	private boolean anyTrigger = false;
 
 	public UriMap() {
-		this.init();
+		this.startInit();
 	}
 
-	public void init() {
+	public void startInit() {
 		root = new UriNode("");
+	}
 
-		IPreferenceStore preferenceStore = Activator.getDefault().getPreferenceStore();
-		this.maxSuggestions = preferenceStore.getInt(PreferenceConstants.P_COLLAPSE_LIMIT);
-		String location = preferenceStore.getString(PreferenceConstants.P_URI_DEFINITION);
-
-		if (!location.isEmpty()) {
-			try {
-				File uriFile = new File(location);
-				SAXParser parser = SAXParserFactory.newInstance().newSAXParser();
-				UriFileParser handler = new UriFileParser(this);
-				parser.parse(uriFile, handler);
-			} catch (Exception E) {
-				PHPCorePlugin.log(E);
-			}
-		}
+	public void finishInit() {
 		root.normalize();
+	}
+
+	void addTrigger(String trigger) {
+		if (trigger.equals("*")) {
+			this.anyTrigger = true;
+		} else {
+			this.triggers.add(trigger);
+		}
 	}
 
 	void addUri(String apiUri) {
@@ -74,7 +56,7 @@ public class UriMap {
 		}
 	}
 
-	public Collection<UriSuggestion> suggest(String uri) {
+	public List<UriNode> suggest(String uri) {
 		String[] parts = uri.split("/");
 		int partsCount = parts.length;
 		String lastPart = parts[partsCount - 1];
@@ -100,43 +82,28 @@ public class UriMap {
 			i += node.getSkip();
 		}
 
-		List<UriSuggestion> result = new ArrayList<UriSuggestion>();
 		List<UriNode> suggestions = new ArrayList<UriNode>();
-		int totalSuggestions = 0;
 		for (UriNode child : node.getChildren()) {
 			if (child.getName().startsWith(lastPart)) {
 				suggestions.add(child);
-				totalSuggestions += child.getChildrenCount();
 			}
 		}
 
-		// for presentation purposes, prefix URI with starting slash
-		String showUri = "";
-		for (int i = 0; i < partsCount - 1; i++) {
-			showUri = showUri.concat(parts[i]).concat("/");
-		}
-
-		boolean useAll = (totalSuggestions <= this.maxSuggestions);
-		for (UriNode child : suggestions) {
-			if (useAll) {
-				// collapse adds leafs automatically
-				for (String childUri : child.collapse()) {
-					result.add(new UriSuggestion(showUri, childUri));
-				}
-			} else if (child.isLeaf()) {
-				String childUri = child.getName();
-				result.add(new UriSuggestion(showUri, childUri));
-			} else if (!useAll) {
-				String childUri = child.getName().concat("/");
-				result.add(new UriSuggestion(showUri, childUri));
-			}
-		}
-
-		return result;
+		return suggestions;
 	}
 
-	public void setMaxSuggestions(int newValue) {
-		this.maxSuggestions = newValue;
+	public boolean suggestsFor(String suggestionTrigger) {
+		if (this.anyTrigger) {
+			return true;
+		}
+
+		for (String trigger : triggers) {
+			if (trigger.equalsIgnoreCase(suggestionTrigger)) {
+				return true;
+			}
+		}
+
+		return false;
 	}
 
 }

@@ -2,12 +2,9 @@ package info.thezero.eclipse.pdt.restapi.codeassist;
 
 import java.util.Collection;
 
-import info.thezero.eclipse.pdt.restapi.uri.UriMap;
+import info.thezero.eclipse.pdt.restapi.uri.UriMapCollection;
 import info.thezero.eclipse.pdt.restapi.uri.UriSuggestion;
 
-import org.eclipse.dltk.core.CompletionProposal;
-import org.eclipse.dltk.core.CompletionRequestor;
-import org.eclipse.dltk.internal.core.SourceRange;
 import org.eclipse.php.core.codeassist.ICompletionContext;
 import org.eclipse.php.core.codeassist.ICompletionStrategy;
 import org.eclipse.php.core.codeassist.IElementFilter;
@@ -30,7 +27,7 @@ public class RestApiCompletionStrategy extends AbstractCompletionStrategy implem
 		// TODO Auto-generated method stub
 		RestApiCompletionContext context = (RestApiCompletionContext) getContext();
 
-		Collection<UriSuggestion> suggestions = UriMap.getDefault().suggest(context.getUri());
+		Collection<UriSuggestion> suggestions = UriMapCollection.getDefault().suggest("api", context.getUri());
 		if (suggestions != null) {
 			for (UriSuggestion suggestion : suggestions) {
 				reporter.reportKeyword(suggestion.getSuggestionPart(), "", getReplacementRange(context));

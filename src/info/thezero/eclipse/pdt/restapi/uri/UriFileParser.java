@@ -6,23 +6,32 @@ import org.xml.sax.helpers.DefaultHandler;
 
 public class UriFileParser extends DefaultHandler {
 	private StringBuilder content;
-	private UriMap map;
+	private UriMapCollection mapCollection;
+	private UriMap currentMap;
 
-	public UriFileParser(UriMap map) {
+	public UriFileParser(UriMapCollection mapCollection) {
 		this.content = new StringBuilder();
-		this.map = map;
+		this.mapCollection = mapCollection;
 	}
 
 	public void startElement(String uri, String localName, String qName,
 			Attributes atts) throws SAXException {
 		this.content = new StringBuilder();
+
+		if (qName.equalsIgnoreCase("collection")) {
+			this.currentMap = this.mapCollection.addMap();
+		}
 	}
 
 	public void endElement(String uri, String localName, String qName)
 			throws SAXException {
 
 		if (qName.equalsIgnoreCase("uri")) {
-			this.map.addUri(this.content.toString());
+			this.currentMap.addUri(this.content.toString());
+		} else if (qName.equalsIgnoreCase("collection")) {
+			this.currentMap.finishInit();
+		} else if (qName.equalsIgnoreCase("trigger")) {
+			this.currentMap.addTrigger(this.content.toString());
 		}
 	}
 
