@@ -64,7 +64,7 @@ public class UriMapCollection {
 
 		List<UriNode> suggestions = new ArrayList<UriNode>();
 		for (UriMap map : this.maps) {
-			if (map.suggestsFor(trigger)) {
+			if (trigger.isEmpty() || map.suggestsFor(trigger)) {
 				suggestions.addAll(map.suggest(uri));
 			}
 		}

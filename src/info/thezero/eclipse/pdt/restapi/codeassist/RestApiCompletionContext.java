@@ -59,7 +59,7 @@ public class RestApiCompletionContext extends QuotesContext {
 	public static String getTriggerFromSequence(TextSequence textSequence, int quoteStart) {
 		TextSequence opening = textSequence.subTextSequence(0, quoteStart);
 
-		Pattern p = Pattern.compile(".*\\b(\\w+)\\s*\\(\\s*.*");
+		Pattern p = Pattern.compile("[\\s\\S]*\\b(\\w+)\\s*\\(\\s*.*");
 		Matcher m = p.matcher(opening);
 
 		if (!m.matches()) {
