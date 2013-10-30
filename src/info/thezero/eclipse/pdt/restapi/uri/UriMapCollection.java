@@ -68,6 +68,11 @@ public class UriMapCollection {
 				suggestions.addAll(map.suggest(uri));
 			}
 		}
+		
+		int totalSuggestions = 0;
+		for (UriNode node : suggestions) {
+			totalSuggestions += node.getChildrenCount();
+		}
 
 		// for presentation purposes, prefix URI with starting slash
 		String showUri = "";
@@ -76,7 +81,7 @@ public class UriMapCollection {
 		}
 
 		List<UriSuggestion> result = new ArrayList<UriSuggestion>();
-		boolean useAll = (suggestions.size() <= this.getMaxSuggestions());
+		boolean useAll = (totalSuggestions <= this.getMaxSuggestions());
 		for (UriNode child : suggestions) {
 			if (useAll) {
 				// collapse adds leafs automatically
@@ -95,7 +100,7 @@ public class UriMapCollection {
 		return result;
 	}
 	public int getMaxSuggestions() {
-		return maxSuggestions;
+		return this.maxSuggestions;
 	}
 	public void setMaxSuggestions(int maxSuggestions) {
 		this.maxSuggestions = maxSuggestions;
